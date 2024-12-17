@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  server:
+    image: forest33/mqtt-sync-server
+    build:
+      context: ./
+      dockerfile: ./deploy/Dockerfile.server
+    container_name: mqtt-sync-server
+    restart: always
+    ports:
+      - "31883:31883/tcp"
+    volumes:
+      - ./config:/config
+    environment:
+      - MQTT_SYNC_CONFIG=./config/server.yaml # change it!
+
+
+  client:
+    image: forest33/mqtt-sync-client
+    build:
+      context: ./
+      dockerfile: ./deploy/Dockerfile.client
+    container_name: mqtt-sync-client
+    restart: always
+    volumes:
+      - ./config:/config
+    environment:
+      - MQTT_SYNC_CONFIG=./config/client.yaml # change it!

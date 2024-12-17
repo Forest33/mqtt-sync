@@ -1,0 +1,17 @@
+FROM golang:1.23.3-alpine
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY . .
+
+ARG ENV_PREFIX
+
+RUN CGO_ENABLED=0 go build -o /cmd/app/server /app/cmd/app/main.go
+
+EXPOSE 31883
+
+CMD ["/cmd/app/server"]

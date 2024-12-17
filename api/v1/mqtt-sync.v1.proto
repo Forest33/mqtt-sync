@@ -1,0 +1,12 @@
+syntax = "proto3";
+package mqtt_sync_service.v1;
+option go_package = "./;mqtt_sync_service";
+
+message Message {
+  string topic = 1;
+  bytes payload = 2;
+}
+
+service MqttSync {
+  rpc Sync(stream Message) returns(stream Message);
+}

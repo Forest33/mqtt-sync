@@ -1,0 +1,21 @@
+Client:
+#  Enabled: true
+#  UseTLS: true
+#  CACert: ./config/cert/ca-cert.pem
+#  Cert: ./config/cert/client-cert.pem
+#  Key: ./config/cert/client-key.pem
+#  Keepalive:
+#    KeepaliveTime: 10
+#    Timeout: 10
+#    PermitWithoutStream: true
+
+MQTT:
+  Host: 127.0.0.1
+#  User: user
+#  Password: password
+#  ServerTLS: true
+
+Sync:
+  Topics:
+    - zigbee2mqtt/Socket-1
+    - zigbee2mqtt/Socket-1/set
