@@ -1,9 +1,9 @@
 Client:
 #  Enabled: true
 #  UseTLS: true
-#  CACert: ./config/cert/ca-cert.pem
-#  Cert: ./config/cert/client-cert.pem
-#  Key: ./config/cert/client-key.pem
+#  CACert: /config/cert/ca-cert.pem
+#  Cert: /config/cert/client-cert.pem
+#  Key: /config/cert/client-key.pem
 #  Keepalive:
 #    KeepaliveTime: 10
 #    Timeout: 10

@@ -13,7 +13,6 @@ import (
 	"github.com/forest33/mqtt-sync/business/entity"
 	"github.com/forest33/mqtt-sync/business/usecase"
 	"github.com/forest33/mqtt-sync/pkg/automaxprocs"
-	"github.com/forest33/mqtt-sync/pkg/build"
 	"github.com/forest33/mqtt-sync/pkg/codec"
 	"github.com/forest33/mqtt-sync/pkg/logger"
 )
@@ -27,7 +26,7 @@ func main() {
 
 	ctx = entity.CreateWg(ctx)
 
-	_, cfg, err := entity.GetConfig(build.EnvPrefix)
+	_, cfg, err := entity.GetConfig()
 	if err != nil {
 		log.Fatal(err)
 	}

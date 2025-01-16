@@ -13,7 +13,7 @@ services:
     volumes:
       - ./config:/config
     environment:
-      - MQTT_SYNC_CONFIG=./config/server.yaml # change it!
+      - MQTT_SYNC_CONFIG=/config/server.yaml # change it!
 
 
   client:
@@ -26,4 +26,4 @@ services:
     volumes:
       - ./config:/config
     environment:
-      - MQTT_SYNC_CONFIG=./config/client.yaml # change it!
+      - MQTT_SYNC_CONFIG=/config/client.yaml # change it!

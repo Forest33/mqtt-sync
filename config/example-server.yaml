@@ -1,9 +1,9 @@
 Server:
 #  Enabled: true
 #  UseTLS: true
-#  CACert: ./config/cert/ca-cert.pem
-#  Cert: ./config/cert/server-cert.pem
-#  Key: ./config/cert/server-key.pem
+#  CACert: /config/cert/ca-cert.pem
+#  Cert: /config/cert/server-cert.pem
+#  Key: /config/cert/server-key.pem
 #  Keepalive:
 #    KeepalivePingMinTime: 30
 #    KeepaliveTime: 10

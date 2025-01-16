@@ -3,9 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
-	"io/fs"
 	"os"
-	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -31,23 +29,15 @@ type Config struct {
 	observers []func(interface{})
 }
 
-func New(configFileName, configFileDir string, cfg interface{}) (*Config, error) {
+func New(cfg interface{}) (*Config, error) {
 	path, ok := os.LookupEnv("MQTT_SYNC_CONFIG")
 	if !ok {
-		if configFileDir != "" {
-			path = filepath.Join(configFileDir, configFileName)
-		} else {
-			ex, err := os.Executable()
-			if err != nil {
-				return nil, err
-			}
-			path = filepath.Join(filepath.Dir(ex), configFileName)
-		}
+		return nil, errors.New("MQTT_SYNC_CONFIG is not set")
 	}
 
 	data, err := os.ReadFile(path)
-	if err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return nil, err
+	if err != nil {
+		return nil, fmt.Errorf("error reading config file %s: %s", path, err)
 	}
 
 	if err = yaml.Unmarshal(data, cfg); err != nil {

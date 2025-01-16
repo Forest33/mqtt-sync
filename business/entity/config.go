@@ -89,9 +89,9 @@ type ConfigHandler interface {
 	AddObserver(f func(interface{})) error
 }
 
-func GetConfig(configDir string) (ConfigHandler, *Config, error) {
+func GetConfig() (ConfigHandler, *Config, error) {
 	cfg := &Config{}
-	h, err := config.New(DefaultConfigFileName, configDir, cfg)
+	h, err := config.New(cfg)
 	if err != nil {
 		return nil, nil, err
 	}
