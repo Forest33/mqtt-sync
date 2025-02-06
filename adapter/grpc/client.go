@@ -19,6 +19,7 @@ type Client struct {
 	ctx    context.Context
 	cfg    *Config
 	log    *logger.Logger
+	queue  *queue
 	cli    apiV1.MqttSyncClient
 	stream apiV1.MqttSync_SyncClient
 	uc     entity.SyncUseCase
@@ -26,9 +27,10 @@ type Client struct {
 
 func NewClient(ctx context.Context, cfg *Config, log *logger.Logger) (*Client, error) {
 	c := &Client{
-		ctx: ctx,
-		cfg: cfg,
-		log: log,
+		ctx:   ctx,
+		cfg:   cfg,
+		log:   log,
+		queue: newQueue(log),
 	}
 
 	serverAddr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
@@ -104,6 +106,8 @@ func (c *Client) Start() error {
 		Int("port", c.cfg.Port).
 		Msg("successfully connected to gRPC server")
 
+	c.queue.Pop(c)
+
 	go func() {
 		var (
 			err error
@@ -134,9 +138,17 @@ func (c *Client) Start() error {
 	return nil
 }
 
-func (c *Client) Send(m entity.SyncMessage) error {
+func (c *Client) Send(m entity.SyncMessage) (err error) {
+	err = c.send(m)
+	if err != nil {
+		c.queue.Push(m)
+	}
+	return
+}
+
+func (c *Client) send(m entity.SyncMessage) error {
 	if c.stream == nil {
-		return nil
+		return entity.ErrStreamDisabled
 	}
 
 	return c.stream.Send(&apiV1.Message{

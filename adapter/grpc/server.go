@@ -23,6 +23,7 @@ type Server struct {
 	ctx    context.Context
 	cfg    *Config
 	log    *logger.Logger
+	queue  *queue
 	lst    net.Listener
 	srv    *grpc.Server
 	uc     entity.SyncUseCase
@@ -31,9 +32,10 @@ type Server struct {
 
 func NewServer(ctx context.Context, cfg *Config, log *logger.Logger) (*Server, error) {
 	s := &Server{
-		ctx: ctx,
-		cfg: cfg,
-		log: log,
+		ctx:   ctx,
+		cfg:   cfg,
+		log:   log,
+		queue: newQueue(log),
 	}
 
 	var err error
@@ -116,6 +118,7 @@ func (s *Server) Sync(stream apiV1.MqttSync_SyncServer) error {
 			}
 
 			if s.uc == nil || len(req.Topic) == 0 {
+				s.queue.Pop(s)
 				md, _ := metadata.FromIncomingContext(ctx)
 				s.log.Debug().Interface("peer", md).Msg("peer connected")
 				continue
@@ -126,9 +129,17 @@ func (s *Server) Sync(stream apiV1.MqttSync_SyncServer) error {
 	}
 }
 
-func (s *Server) Send(m entity.SyncMessage) error {
+func (s *Server) Send(m entity.SyncMessage) (err error) {
+	err = s.send(m)
+	if err != nil {
+		s.queue.Push(m)
+	}
+	return
+}
+
+func (s *Server) send(m entity.SyncMessage) error {
 	if s.stream == nil {
-		return nil
+		return entity.ErrStreamDisabled
 	}
 
 	return s.stream.SendMsg(&apiV1.Message{

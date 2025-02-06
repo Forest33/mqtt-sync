@@ -5,10 +5,6 @@ import (
 	"github.com/forest33/mqtt-sync/pkg/config"
 )
 
-const (
-	DefaultConfigFileName = "mqtt-sync.yaml"
-)
-
 type Config struct {
 	Server  *Server  `yaml:"Server"`
 	Client  *Client  `yaml:"Client"`
