@@ -1,6 +1,8 @@
 package mqtt
 
 import (
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+
 	"github.com/forest33/mqtt-sync/pkg/codec"
 )
 
@@ -24,11 +26,13 @@ func (m *message) IsPayloadKey() bool {
 	return m.payloadKey
 }
 
-func (c *Client) newMessage(topic string, payload []byte) (*message, error) {
+func (c *Client) newMessage(msg mqtt.Message) (*message, error) {
 	var (
 		data map[string]interface{}
 		err  error
 	)
+
+	payload := msg.Payload()
 
 	if err := c.codec.Unmarshal(payload, &data); err != nil {
 		return nil, err
@@ -44,7 +48,7 @@ func (c *Client) newMessage(topic string, payload []byte) (*message, error) {
 	}
 
 	return &message{
-		topic:      topic,
+		topic:      msg.Topic(),
 		payload:    payload,
 		codec:      c.codec,
 		data:       data,

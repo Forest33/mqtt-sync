@@ -77,7 +77,7 @@ func (c *Client) Publish(topic string, payload []byte) error {
 
 func (c *Client) Subscribe(topic string, handler MessageHandler) error {
 	token := c.cli.Subscribe(topic, 0, func(client mqtt.Client, msg mqtt.Message) {
-		m, err := c.newMessage(topic, msg.Payload())
+		m, err := c.newMessage(msg)
 		if err != nil {
 			c.log.Error().Err(err).Str("topic", topic).Str("payload", string(msg.Payload())).Msg("failed to create message")
 			return
@@ -109,17 +109,17 @@ func (c *Client) SetDisconnectHandler(h DisconnectHandler) {
 	c.externalDisconnectHandler = h
 }
 
-func (c *Client) messagePubHandler(client mqtt.Client, msg mqtt.Message) {
+func (c *Client) messagePubHandler(_ mqtt.Client, msg mqtt.Message) {
 	c.log.Debug().Msgf("MQTT received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
 }
 
-func (c *Client) connectHandler(client mqtt.Client) {
+func (c *Client) connectHandler(_ mqtt.Client) {
 	c.log.Info().Str("host", c.cfg.Host).Int("port", c.cfg.Port).Msg("MQTT connected")
 	if c.externalConnectHandler != nil {
 		c.externalConnectHandler()
 	}
 }
 
-func (c *Client) connectLostHandler(client mqtt.Client, err error) {
+func (c *Client) connectLostHandler(_ mqtt.Client, err error) {
 	c.log.Error().Msgf("MQTT connect lost: %v", err)
 }

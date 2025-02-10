@@ -18,6 +18,4 @@ MQTT:
 
 Sync:
   Topics:
-    - zigbee2mqtt/
-    - zigbee2mqtt/Socket-1
-    - zigbee2mqtt/Socket-1/set
+    - zigbee2mqtt/#
